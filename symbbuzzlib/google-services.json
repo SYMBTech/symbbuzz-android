@@ -1,0 +1,51 @@
+{
+  "project_info": {
+    "project_number": "629079844011",
+    "firebase_url": "https://symbbuzz.firebaseio.com",
+    "project_id": "symbbuzz",
+    "storage_bucket": "symbbuzz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629079844011:android:a19b2e52c40b65f1",
+        "android_client_info": {
+          "package_name": "symbbuzz.com.symbbuzzlib"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629079844011-mk20k0fsatnhan4hkujkun6nc977i3r7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "symbbuzz.com.symbbuzzlib",
+            "certificate_hash": "6d89cc0cc383552f901354b1d5b78683220960e8"
+          }
+        },
+        {
+          "client_id": "629079844011-17hg481anlosnpu5hqmedi4sa2l9r0lv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [{ "current_key": "AAAAkngUpKs:APA91bEgRPjRB_PKTPmBc_ePvcT6jBB_BdtG8uBBdKANTOaGaDHXyfTfhr-V9d3L-0i9kPMBFms40fgf6MVP3ZAIDo-PZUBadY2R0gtqxBCz59UdC74g5yHAJ9_E09e2Zto8uEtlxnGa" }],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629079844011-17hg481anlosnpu5hqmedi4sa2l9r0lv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
