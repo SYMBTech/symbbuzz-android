@@ -12,6 +12,7 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import symbbuzz.com.symbbuzzlib.R
@@ -94,7 +95,6 @@ class FCMService: FirebaseMessagingService() {
         }
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         notificationManager!!.notify(notificationId, notificationBuilder.build())
     }
 
@@ -125,6 +125,5 @@ class FCMService: FirebaseMessagingService() {
             e.printStackTrace()
             return null
         }
-
     }
 }
