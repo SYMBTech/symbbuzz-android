@@ -19,7 +19,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-class FCMService: FirebaseMessagingService() {
+object FCMService: FirebaseMessagingService() {
 
     var notificationManager: NotificationManager? = null
     var ADMIN_CHANNEL_ID = "23"
@@ -99,7 +99,7 @@ class FCMService: FirebaseMessagingService() {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private fun setupChannels() {
+    fun setupChannels() {
         val adminChannelName = getString(R.string.notifications_admin_channel_name)
         val adminChannelDescription = getString(R.string.notifications_admin_channel_description)
         val adminChannel: NotificationChannel

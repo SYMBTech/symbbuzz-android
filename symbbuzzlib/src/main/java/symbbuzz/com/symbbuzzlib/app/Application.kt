@@ -11,6 +11,5 @@ class Application: android.app.Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
-        Fabric.with(this, Crashlytics())
     }
 }
