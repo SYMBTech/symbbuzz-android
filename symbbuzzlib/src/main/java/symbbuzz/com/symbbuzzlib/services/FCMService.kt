@@ -19,7 +19,7 @@ import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 
-object FCMService: FirebaseMessagingService() {
+class FCMService: FirebaseMessagingService() {
 
     var notificationManager: NotificationManager? = null
     var ADMIN_CHANNEL_ID = "23"
