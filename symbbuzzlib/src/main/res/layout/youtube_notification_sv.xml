@@ -3,13 +3,28 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:background="@color/colorWhite"
-    android:weightSum="4"
-    android:layout_height="wrap_content">
+    android:weightSum="5"
+    android:id="@+id/noti_ll"
+    android:layout_height="65dp">
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="3"
+        android:orientation="horizontal"
+        android:layout_weight="1.5">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/noti_image"
+            android:scaleType="centerCrop"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3.5"
         android:padding="10dp"
         android:layout_gravity="center"
         android:gravity="center"
@@ -19,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/noti_title"
-            android:textSize="18dp"
+            android:textSize="15dp"
             android:text="Title"
             android:maxLines="1"
             android:ellipsize="end"
@@ -34,20 +49,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:text="Content"
-            android:textSize="15dp"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/noti_image"
-            android:scaleType="centerCrop"/>
+            android:textSize="13dp"/>
 
     </LinearLayout>
 

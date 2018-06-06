@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SYMBBuzz</string>
+    <string name="rationale_storage">This app needs access to your storage for updating the profile picture</string>
 </resources>

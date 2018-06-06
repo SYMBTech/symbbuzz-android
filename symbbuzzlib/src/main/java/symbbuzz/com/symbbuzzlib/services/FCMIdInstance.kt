@@ -11,7 +11,7 @@ class FCMIdInstance: FirebaseInstanceIdService() {
         super.onTokenRefresh()
         val refreshedToken = FirebaseInstanceId.getInstance().token
         Log.e("refreshtoken", refreshedToken)
-        val deviceInfo = DeviceInfoUtil.getDeviceInfo(this)
-        CommonUtils.sendDeviceInfoToServer(deviceInfo)
+        //val deviceInfo = DeviceInfoUtil.getDeviceInfo(this)
+        CommonUtils.registerTokenToServer(refreshedToken!!)
     }
 }
