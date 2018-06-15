@@ -8,15 +8,13 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
-object NetworkUtil {
+internal object NetworkUtil {
 
     private var endPoints: Endpoint? = null
 
-    fun getEndpoint(): Endpoint? = endPoints
+    internal fun getEndpoint(): Endpoint? = endPoints
 
-    fun initRetrofit() {
-        val logging = HttpLoggingInterceptor()
-        logging.level = HttpLoggingInterceptor.Level.BODY
+    fun initRetrofit(logEnable: Boolean, logLevel: String?) {
         val httpClient: OkHttpClient.Builder
         httpClient = OkHttpClient.Builder()
         httpClient.addInterceptor { chain ->
@@ -27,9 +25,22 @@ object NetworkUtil {
             val requestBuilder = request.build()
             chain.proceed(requestBuilder)
         }
+        if(logLevel != null) {
+            val logging = HttpLoggingInterceptor()
+            logging.level = if(logLevel.equals(Constants.BASIC))
+                HttpLoggingInterceptor.Level.BASIC
+            else if(logLevel.equals(Constants.HEADER))
+                HttpLoggingInterceptor.Level.HEADERS
+            else if(logLevel.equals(Constants.NONE))
+                HttpLoggingInterceptor.Level.NONE
+            else
+                HttpLoggingInterceptor.Level.BODY
+
+            if(logEnable)
+                httpClient.addInterceptor(logging)
+        }
         httpClient.connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
         httpClient.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-        httpClient.addInterceptor(logging)
         val retrofit = Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())

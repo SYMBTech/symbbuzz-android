@@ -7,10 +7,11 @@ import android.util.Log
 import android.app.NotificationManager
 import com.symb.foxpandasdk.constants.Constants
 import com.symb.foxpandasdk.data.dbHelper.DBHelper
+import com.symb.foxpandasdk.main.FoxPanda
 
 class ClickEventHandler: BroadcastReceiver() {
 
-    lateinit var dbHelper: DBHelper
+    internal lateinit var dbHelper: DBHelper
 
     override fun onReceive(context: Context?, intent: Intent?) {
         dbHelper = DBHelper(context!!)
@@ -28,12 +29,9 @@ class ClickEventHandler: BroadcastReceiver() {
         } else if(intent.action == Constants.OPEN_ACTIVITY) {
             val result = dbHelper.registerEvent(Constants.NOTIFICATION_CLICKED)
             if(result)
-                Log.e(Constants.NOTIFICATION_CLICKED, "data successfully logged")
+                FoxPanda.FPLogger(Constants.NOTIFICATION_CLICKED, "data successfully logged")
             else
-                Log.e(Constants.NOTIFICATION_CLICKED, "data logging failed")
-            val firebaseInfo = dbHelper.getAllEvents()
-            for(i in firebaseInfo)
-                Log.e("event", i.eventName)
+                FoxPanda.FPLogger(Constants.NOTIFICATION_CLICKED, "data logging failed")
             val activity = intent.getStringExtra(Constants.ACTIVITY_NAME)
             val packageName = intent.getStringExtra(Constants.PACKAGE_NAME)
             val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)

@@ -12,15 +12,57 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.symb.foxpandasdk.constants.Constants
 import com.symb.foxpandasdk.data.models.FirebaseInfo
 
-class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(SQL_CREATE_ENTRIES)
+        db.execSQL(SQL_CREATE_TABLE)
+        db.execSQL(SQL_CREATE_TOKEN_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
-        db.execSQL(SQL_DELETE_ENTRIES)
+        db.execSQL(SQL_DELETE_TABLE)
+        db.execSQL(SQL_DELETE_TOKEN_TABLE)
         onCreate(db)
+    }
+
+    @Throws(SQLiteConstraintException::class)
+    fun registerToken(token: String): Boolean {
+        val db = writableDatabase
+
+        val value = ContentValues()
+        value.put(Constants.FIREBASE_TOKEN, token)
+
+        val result = db.insert(Constants.TOKEN_TABLE, null, value)
+        db.close()
+        return result.toInt() != -1
+    }
+
+    fun getToken(): String {
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        var token = ""
+        try {
+            cursor = db.rawQuery("select * from " + Constants.TOKEN_TABLE, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_TOKEN_TABLE)
+            return ""
+        }
+
+        if(cursor!!.moveToFirst()) {
+            token = cursor.getString(cursor.getColumnIndex(Constants.FIREBASE_TOKEN))
+        }
+        db.close()
+        return token
+    }
+
+    @Throws(SQLiteConstraintException::class)
+    fun deleteTokens(token: String): Boolean {
+        val db = writableDatabase
+        val selection = Constants.FIREBASE_TOKEN + " LIKE ?"
+        val selectionArgs = arrayOf(token)
+        val result = db.delete(Constants.TOKEN_TABLE, selection, selectionArgs)
+        db.close()
+        return result != -1
     }
 
     @Throws(SQLiteConstraintException::class)
@@ -35,6 +77,7 @@ class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         values.put(Constants.TIMESTAMP, System.currentTimeMillis())
 
         val newRowId = db.insert(Constants.TABLE_NAME, null, values)
+        db.close()
         return newRowId.toInt() != -1
     }
 
@@ -44,6 +87,7 @@ class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         val selection = Constants.EVENT_NAME + " LIKE ?"
         val selectionArgs = arrayOf(eventName)
         val result = db.delete(Constants.TABLE_NAME, selection, selectionArgs)
+        db.close()
         return result != -1
     }
 
@@ -54,7 +98,7 @@ class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
         try {
             cursor = db.rawQuery("select * from " + Constants.TABLE_NAME, null)
         } catch (e: SQLiteException) {
-            db.execSQL(SQL_CREATE_ENTRIES)
+            db.execSQL(SQL_CREATE_TABLE)
             return ArrayList<FirebaseInfo>()
         }
 
@@ -71,21 +115,28 @@ class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABASE_NAME, n
                 cursor.moveToNext()
             }
         }
+        db.close()
         return firebaseInfo
     }
 
     companion object {
         val DATABASE_VERSION = 1
-        val DATABASE_NAME = "symbbuzz.db"
+        val DATABASE_NAME = "foxpanda.db"
 
-        private val SQL_CREATE_ENTRIES =
+        private val SQL_CREATE_TABLE =
             "CREATE TABLE " + Constants.TABLE_NAME + " (" +
                 Constants.FIREBASE_TOKEN + " TEXT," +
                 Constants.DEVICE_ID + " TEXT," +
                 Constants.EVENT_NAME + " TEXT," +
                 Constants.TIMESTAMP + " TEXT)"
 
-        private val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS " + Constants.TABLE_NAME
+        private val SQL_CREATE_TOKEN_TABLE =
+            "CREATE TABLE " + Constants.TOKEN_TABLE + " (" +
+                Constants.FIREBASE_TOKEN + " TEXT)"
+
+        private val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + Constants.TABLE_NAME
+
+        private val SQL_DELETE_TOKEN_TABLE = "DROP TABLE IF EXISTS " + Constants.TOKEN_TABLE
     }
 
 }

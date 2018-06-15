@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:textColor="@color/colorBlack"
             android:id="@+id/noti_content"
-            android:maxLines="2"
+            android:maxLines="1"
             android:ellipsize="end"
             android:text="Content"
             android:textSize="13dp"/>

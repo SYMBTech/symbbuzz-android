@@ -24,7 +24,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.symb.foxpandasdk.BuildConfig
 import kotlin.collections.HashMap
 
-object DeviceInfoUtil {
+internal object DeviceInfoUtil {
 
     fun getDeviceInfo(context: Context): HashMap<String, String> {
         val tm = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
