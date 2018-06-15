@@ -1,13 +1,17 @@
 package com.symb.foxpandasdk.ui.notifications
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import com.google.firebase.messaging.RemoteMessage
 import com.symb.foxpandasdk.R
 import com.symb.foxpandasdk.constants.Constants
+import com.symb.foxpandasdk.main.FoxPanda
 
-internal class YoutubeNotification(context: Context, remoteMessage: RemoteMessage) : DefaultNotification(context, remoteMessage) {
+internal class ShareNotification(context: Context, remoteMessage: RemoteMessage) : DefaultNotification(context, remoteMessage) {
+
+    val shareMessage = remoteMessage.data.get(Constants.SHARE_MESSAGE)
 
     override fun getInitView(context: Context, notificationId: Int, viewType: String): RemoteViews {
         var views: RemoteViews? = null
@@ -18,12 +22,13 @@ internal class YoutubeNotification(context: Context, remoteMessage: RemoteMessag
 
         super.configureViews(views)
 
-        if(super.remoteViewsUtils.shareMessage != null) {
+        if(shareMessage != null) {
             views.setViewVisibility(R.id.share, View.VISIBLE)
-            initShareIntent(context, views, remoteViewsUtils.shareMessage!!)
+            initShareIntent(context, views, shareMessage)
         }
-        else
+        else {
             views.setViewVisibility(R.id.share, View.GONE)
+        }
 
         return views
     }

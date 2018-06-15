@@ -37,4 +37,18 @@ internal object Constants {
 
     val BIG_VIEW = "big_view"
     val SMALL_VIEW = "small_view"
+
+    val NOTIFICATION_PATH = "com.symb.foxpandasdk.ui.notifications."
+
+    fun getClassName(template: String): String? {
+        when(template) {
+            "default" -> {
+                return "DefaultNotification"
+            }
+            "share" -> {
+                return "ShareNotification"
+            }
+        }
+        return ""
+    }
 }

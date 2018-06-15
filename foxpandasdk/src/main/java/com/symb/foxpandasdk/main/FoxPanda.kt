@@ -7,7 +7,7 @@ import android.util.Log
 import com.symb.foxpandasdk.constants.Constants
 import com.symb.foxpandasdk.utils.NetworkUtil
 
-class FoxPanda: AppCompatActivity() {
+class FoxPanda {
 
     enum class LogLevel {
         BASIC,
@@ -23,8 +23,10 @@ class FoxPanda: AppCompatActivity() {
         }
 
         fun setLog(logEnable: Boolean, loglevel: LogLevel?) {
-            val level = getLevelString(loglevel!!)
-            NetworkUtil.initRetrofit(logEnable, level)
+            if(loglevel != null) {
+                val level = getLevelString(loglevel)
+                NetworkUtil.initRetrofit(logEnable, level)
+            }
         }
 
         private fun getLevelString(loglevel: LogLevel): String {
@@ -42,11 +44,6 @@ class FoxPanda: AppCompatActivity() {
             Log.e(tag, message)
         }
 
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-        NetworkUtil.initRetrofit(true, Constants.DEFAULT_LOG_LEVEL)
     }
 
 }

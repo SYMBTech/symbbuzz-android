@@ -27,28 +27,9 @@ class ClickEventHandler: BroadcastReceiver() {
                 closeNotificationTray(context)
             }
         } else if(intent.action == Constants.OPEN_ACTIVITY) {
-            val result = dbHelper.registerEvent(Constants.NOTIFICATION_CLICKED)
-            if(result)
-                FoxPanda.FPLogger(Constants.NOTIFICATION_CLICKED, "data successfully logged")
-            else
-                FoxPanda.FPLogger(Constants.NOTIFICATION_CLICKED, "data logging failed")
-            val activity = intent.getStringExtra(Constants.ACTIVITY_NAME)
-            val packageName = intent.getStringExtra(Constants.PACKAGE_NAME)
             val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notificationId)
-            /*if(activity != null) {
-                var clickIntent: Intent? = null
-                try {
-                    val classType = Class.forName(packageName + "." + activity)
-                    clickIntent = Intent(context, classType)
-                    context.startActivity(clickIntent)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    context.startActivity(Intent(packageName))
-                }
-            } else
-                context.startActivity(Intent(packageName))*/
             closeNotificationTray(context)
         }
     }

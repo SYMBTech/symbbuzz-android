@@ -16,12 +16,8 @@ class FCMIdInstance: FirebaseInstanceIdService() {
         dbHelper = DBHelper(this)
         NetworkUtil.initRetrofit(true, Constants.DEFAULT_LOG_LEVEL)
         val refreshedToken = FirebaseInstanceId.getInstance().token
-        val bool = dbHelper.registerToken(refreshedToken!!)
-        if(bool)
-            FoxPanda.FPLogger("Yay", "Registered")
-        val token = dbHelper.getToken()
+        dbHelper.registerToken(refreshedToken!!)
         CommonUtils.registerTokenToServer(refreshedToken, this)
-        Log.e("dbtoken", token)
         Log.e("refreshtoken", refreshedToken)
     }
 }
