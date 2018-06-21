@@ -25,19 +25,22 @@ internal object NetworkUtil {
             val requestBuilder = request.build()
             chain.proceed(requestBuilder)
         }
-        if(logLevel != null) {
-            val logging = HttpLoggingInterceptor()
-            logging.level = if(logLevel.equals(Constants.BASIC))
-                HttpLoggingInterceptor.Level.BASIC
-            else if(logLevel.equals(Constants.HEADER))
-                HttpLoggingInterceptor.Level.HEADERS
-            else if(logLevel.equals(Constants.NONE))
-                HttpLoggingInterceptor.Level.NONE
-            else
-                HttpLoggingInterceptor.Level.BODY
+        if(!logEnable) {
+        } else {
+            if (logLevel != null) {
+                val logging = HttpLoggingInterceptor()
+                logging.level = if (logLevel.equals(Constants.BASIC))
+                    HttpLoggingInterceptor.Level.BASIC
+                else if (logLevel.equals(Constants.HEADER))
+                    HttpLoggingInterceptor.Level.HEADERS
+                else if (logLevel.equals(Constants.NONE))
+                    HttpLoggingInterceptor.Level.NONE
+                else
+                    HttpLoggingInterceptor.Level.BODY
 
-            if(logEnable)
-                httpClient.addInterceptor(logging)
+                if (logEnable)
+                    httpClient.addInterceptor(logging)
+            }
         }
         httpClient.connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
         httpClient.readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)

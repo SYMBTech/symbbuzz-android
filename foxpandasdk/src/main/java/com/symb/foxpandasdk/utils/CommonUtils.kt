@@ -6,14 +6,15 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import com.symb.foxpandasdk.data.dbHelper.DBHelper
 import com.symb.foxpandasdk.main.FoxPanda
-import com.symb.foxpandasdk.services.FCMIdInstance
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import java.net.HttpURLConnection
-import java.net.SocketTimeoutException
 import java.net.URL
+import dalvik.system.DexFile
+import java.io.IOException
+
 
 internal object CommonUtils {
 
@@ -29,8 +30,8 @@ internal object CommonUtils {
             .subscribeOn(Schedulers.io())
             .subscribe({ result ->
                 if (result != null) {
-                    val result = dbHelper.deleteTokens(token)
-                    if(result)
+                    val dbResult = dbHelper.deleteTokens(token)
+                    if(dbResult)
                         Log.e("Yay", "Deleted")
                     else
                         Log.e("Nay", "Noteleted")
@@ -61,6 +62,27 @@ internal object CommonUtils {
             e.printStackTrace()
             return null
         }
+    }
+
+    fun getClassesOfPackage(context: Context): Array<String> {
+        val classes = ArrayList<String>()
+        FoxPanda.FPLogger("package", context.packageName)
+        try {
+            val packageCodePath = context.packageCodePath
+            @Suppress("DEPRECATION")
+            val df = DexFile(packageCodePath)
+            val iter = df.entries()
+            while (iter.hasMoreElements()) {
+                val className = iter.nextElement()
+                if (className.contains(context.packageName)) {
+                    classes.add(className)
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        return classes.toArray(arrayOfNulls(classes.size))
     }
 
 }

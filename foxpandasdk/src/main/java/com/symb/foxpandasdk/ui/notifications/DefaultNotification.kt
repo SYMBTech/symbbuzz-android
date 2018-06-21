@@ -10,6 +10,8 @@ import android.widget.RemoteViews
 import com.google.firebase.messaging.RemoteMessage
 import com.symb.foxpandasdk.R
 import com.symb.foxpandasdk.constants.Constants
+import com.symb.foxpandasdk.data.dbHelper.DBHelper
+import com.symb.foxpandasdk.main.FoxPanda
 import com.symb.foxpandasdk.services.ClickEventHandler
 import com.symb.foxpandasdk.utils.CommonUtils
 import java.util.*
@@ -21,6 +23,8 @@ internal open class DefaultNotification(var context: Context, var remoteMessage:
     var message: String? = remoteMessage.data.get(Constants.CONTENT)
     var activity: String? = remoteMessage.data.get(Constants.CLICK_ACTION)
     var image: String? = remoteMessage.data.get(Constants.MEDIA_URL)
+    var url: String? = remoteMessage.data.get("url")
+    val db = DBHelper(context)
 
     open fun getInitView(context: Context, notificationId: Int, viewType: String): RemoteViews {
         val views: RemoteViews?
@@ -42,7 +46,7 @@ internal open class DefaultNotification(var context: Context, var remoteMessage:
                 views.setImageViewBitmap(R.id.noti_image, bitmap)
             }
         }
-        views.setTextViewText(R.id.noti_time, DateFormat.format("hh:mm A", Calendar.getInstance().getTime()))
+        views.setTextViewText(R.id.noti_time, DateFormat.format("hh:mm a", Calendar.getInstance().getTime()))
         if (title != null)
             views.setTextViewText(R.id.noti_title, title)
         if (message != null)
@@ -58,9 +62,26 @@ internal open class DefaultNotification(var context: Context, var remoteMessage:
     }
 
     fun initOpenIntent(context: Context, views: RemoteViews, notificationId: Int, activity: String) {
+        if(activity.equals("richMedia"))
+            setOpenPendingIntent(context, views, notificationId, activity)
+        else {
+            val classes = db.getAllClasses()
+            classes.forEach {
+                if(it.contains(activity)) {
+                    setOpenPendingIntent(context, views, notificationId, it)
+                    return
+                }
+            }
+        }
+    }
+
+    private fun setOpenPendingIntent(context: Context, views: RemoteViews, notificationId: Int, activity: String) {
+        FoxPanda.FPLogger("yay", activity)
         val openNotificationIntent = Intent(context, ClickEventHandler::class.java)
         openNotificationIntent.action = Constants.OPEN_ACTIVITY
         openNotificationIntent.putExtra(Constants.NOTIFICATION_ID, notificationId)
+        openNotificationIntent.putExtra(Constants.CLICK_ACTION, activity)
+        openNotificationIntent.putExtra("url", url)
         val pOpenNotificationIntent = PendingIntent.getBroadcast(context, notificationId, openNotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         views.setOnClickPendingIntent(R.id.noti_ll, pOpenNotificationIntent)
     }

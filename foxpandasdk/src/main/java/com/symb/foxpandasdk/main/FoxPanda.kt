@@ -1,10 +1,10 @@
 package com.symb.foxpandasdk.main
 
-import android.os.Bundle
-import android.os.PersistableBundle
-import android.support.v7.app.AppCompatActivity
+import android.content.Context
 import android.util.Log
 import com.symb.foxpandasdk.constants.Constants
+import com.symb.foxpandasdk.data.dbHelper.DBHelper
+import com.symb.foxpandasdk.utils.CommonUtils
 import com.symb.foxpandasdk.utils.NetworkUtil
 
 class FoxPanda {
@@ -26,6 +26,16 @@ class FoxPanda {
             if(loglevel != null) {
                 val level = getLevelString(loglevel)
                 NetworkUtil.initRetrofit(logEnable, level)
+            } else {
+                NetworkUtil.initRetrofit(false, Constants.DEFAULT_LOG_LEVEL)
+            }
+        }
+
+        fun getClassesName(context: Context) {
+            val db = DBHelper(context)
+            val classes = CommonUtils.getClassesOfPackage(context)
+            classes.forEach {
+                db.saveClassNameIntoDB(it)
             }
         }
 

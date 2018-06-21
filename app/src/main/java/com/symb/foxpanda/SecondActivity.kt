@@ -1,17 +1,15 @@
 package com.symb.foxpanda
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.util.Patterns
-import com.symb.foxpandasdk.main.FoxPanda
+import kotlinx.android.synthetic.main.activity_main.*
 
-
-class MainActivity : AppCompatActivity() {
-
+class SecondActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        FoxPanda.getClassesName(this)
+        txtView.text = "Yay, brah"
     }
 }

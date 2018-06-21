@@ -9,10 +9,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.Retrofit
 import java.io.IOException
 
-
-/**
- * Created by zultanite on 1/18/2018.
- */
 object ErrorParseUtil {
     internal fun parseError(response: Response<*>): ErrorModel? {
         val retrofit = Retrofit.Builder()

@@ -15,6 +15,7 @@ import android.widget.RemoteViews
 import com.google.firebase.messaging.RemoteMessage
 import com.symb.foxpandasdk.R
 import com.symb.foxpandasdk.constants.Constants
+import com.symb.foxpandasdk.data.dbHelper.DBHelper
 import com.symb.foxpandasdk.main.FoxPanda
 import java.util.*
 
@@ -27,6 +28,7 @@ internal class FPNotificationManager(var context: Context, var remoteMessage: Re
     var clickIntent: Intent? = null
     var template: String? = null
     var notificationId: Int = 0
+    internal lateinit var dbHelper: DBHelper
 
     fun showNotification() {
         template = remoteMessage.data.get(Constants.TEMPLATE)
@@ -76,6 +78,7 @@ internal class FPNotificationManager(var context: Context, var remoteMessage: Re
     }
 
     private fun notifyNotification() {
+        dbHelper = DBHelper(context)
         clickIntent = Intent(context.packageName)
         clickIntent!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
         val pendingIntent = PendingIntent.getActivity(context, notificationId, clickIntent,
@@ -83,6 +86,12 @@ internal class FPNotificationManager(var context: Context, var remoteMessage: Re
 
         val notificationBuilder = buildNotification(context, pendingIntent)
         notificationManagerManager!!.notify(notificationId, notificationBuilder.build())
+        val result = dbHelper.registerEvent(Constants.NOTIFICATION_DISPLAYED)
+        if (result)
+            FoxPanda.FPLogger(Constants.NOTIFICATION_DISPLAYED, "data successfully logged")
+        else
+            FoxPanda.FPLogger(Constants.NOTIFICATION_DISPLAYED, "data logging failed")
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)

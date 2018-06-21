@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import com.symb.foxpandasdk.constants.Constants
 import com.symb.foxpandasdk.data.dbHelper.DBHelper
 import com.symb.foxpandasdk.main.FoxPanda
+import com.symb.foxpandasdk.ui.RichMediaNotification
 
 class ClickEventHandler: BroadcastReceiver() {
 
@@ -27,8 +28,33 @@ class ClickEventHandler: BroadcastReceiver() {
                 closeNotificationTray(context)
             }
         } else if(intent.action == Constants.OPEN_ACTIVITY) {
+            val result = dbHelper.registerEvent(Constants.NOTIFICATION_CLICKED)
+            if(result)
+                Log.e(Constants.NOTIFICATION_CLICKED, "data successfully logged")
+            else
+                Log.e(Constants.NOTIFICATION_CLICKED, "data logging failed")
             val notificationId = intent.getIntExtra(Constants.NOTIFICATION_ID, 0)
+            val clickAction = intent.getStringExtra(Constants.CLICK_ACTION)
+            FoxPanda.FPLogger("classNameAction", clickAction)
+            val url = intent.getStringExtra("url")
             val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            if(clickAction != null) {
+                var intent: Intent? = null
+                if(clickAction.equals("richMedia")) {
+                    intent = Intent(context, RichMediaNotification::class.java)
+                    intent.putExtra("url", url)
+                }
+                else {
+                    try {
+                        val cls = Class.forName(clickAction)
+                        intent = Intent(context, cls)
+                    } catch (e: ClassNotFoundException) {
+                        e.printStackTrace()
+                    }
+                }
+                intent!!.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            }
             notificationManager.cancel(notificationId)
             closeNotificationTray(context)
         }

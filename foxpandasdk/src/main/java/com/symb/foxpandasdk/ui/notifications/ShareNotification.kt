@@ -12,15 +12,16 @@ import com.symb.foxpandasdk.main.FoxPanda
 internal class ShareNotification(context: Context, remoteMessage: RemoteMessage) : DefaultNotification(context, remoteMessage) {
 
     val shareMessage = remoteMessage.data.get(Constants.SHARE_MESSAGE)
+    val clickAction = remoteMessage.data.get(Constants.CLICK_ACTION)
 
     override fun getInitView(context: Context, notificationId: Int, viewType: String): RemoteViews {
-        var views: RemoteViews? = null
+        val views: RemoteViews?
         if(viewType.equals(Constants.SMALL_VIEW))
             views = RemoteViews(context.packageName, R.layout.default_notification_sv)
         else
             views = RemoteViews(context.packageName, R.layout.default_notification_bv)
 
-        super.configureViews(views)
+        configureViews(views)
 
         if(shareMessage != null) {
             views.setViewVisibility(R.id.share, View.VISIBLE)
@@ -29,6 +30,9 @@ internal class ShareNotification(context: Context, remoteMessage: RemoteMessage)
         else {
             views.setViewVisibility(R.id.share, View.GONE)
         }
+
+        if(clickAction != null)
+            initOpenIntent(context, views, notificationId, clickAction)
 
         return views
     }

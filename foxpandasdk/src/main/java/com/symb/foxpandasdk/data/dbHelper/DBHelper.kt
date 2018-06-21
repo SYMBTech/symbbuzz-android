@@ -17,11 +17,13 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
     override fun onCreate(db: SQLiteDatabase) {
         db.execSQL(SQL_CREATE_TABLE)
         db.execSQL(SQL_CREATE_TOKEN_TABLE)
+        db.execSQL(SQL_CREATE_CLASS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
         db.execSQL(SQL_DELETE_TABLE)
         db.execSQL(SQL_DELETE_TOKEN_TABLE)
+        db.execSQL(SQL_DELETE_CLASS_TABLE)
         onCreate(db)
     }
 
@@ -119,6 +121,49 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
         return firebaseInfo
     }
 
+    @Throws(SQLiteConstraintException::class)
+    fun saveClassNameIntoDB(className: String): Boolean {
+        val db = writableDatabase
+
+        val values = ContentValues()
+        values.put(Constants.CLASS_NAME, className)
+
+        val newRowId = db.insertWithOnConflict(Constants.CLASS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        db.close()
+        return newRowId.toInt() != -1
+    }
+
+    @Throws(SQLiteConstraintException::class)
+    fun deleteClass(className: String): Boolean {
+        val db = writableDatabase
+        val selection = Constants.CLASS_NAME + " LIKE ?"
+        val selectionArgs = arrayOf(className)
+        val result = db.delete(Constants.CLASS_TABLE, selection, selectionArgs)
+        db.close()
+        return result != -1
+    }
+
+    fun getAllClasses(): ArrayList<String> {
+        val classes = ArrayList<String>()
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery("select * from " + Constants.CLASS_TABLE, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_CLASS_TABLE)
+            return ArrayList<String>()
+        }
+
+        if (cursor!!.moveToFirst()) {
+            while (cursor.isAfterLast == false) {
+                classes.add(cursor.getString(cursor.getColumnIndex(Constants.CLASS_NAME)))
+                cursor.moveToNext()
+            }
+        }
+        db.close()
+        return classes
+    }
+
     companion object {
         val DATABASE_VERSION = 1
         val DATABASE_NAME = "foxpanda.db"
@@ -134,9 +179,15 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
             "CREATE TABLE " + Constants.TOKEN_TABLE + " (" +
                 Constants.FIREBASE_TOKEN + " TEXT)"
 
+        private val SQL_CREATE_CLASS_TABLE =
+            "CREATE TABLE " + Constants.CLASS_TABLE + " (" +
+                Constants.CLASS_NAME + " TEXT)"
+
         private val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + Constants.TABLE_NAME
 
         private val SQL_DELETE_TOKEN_TABLE = "DROP TABLE IF EXISTS " + Constants.TOKEN_TABLE
+
+        private val SQL_DELETE_CLASS_TABLE = "DROP TABLE IF EXISTS " + Constants.CLASS_TABLE
     }
 
 }

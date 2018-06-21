@@ -123,10 +123,10 @@ internal object DeviceInfoUtil {
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     fun ramSize(context: Context): Long {
-        val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val activityManager = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager?
         val memoryInfo = ActivityManager.MemoryInfo()
         assert(activityManager != null)
-        activityManager.getMemoryInfo(memoryInfo)
+        activityManager!!.getMemoryInfo(memoryInfo)
         return memoryInfo.totalMem / (1024 * 1024)
     }
 

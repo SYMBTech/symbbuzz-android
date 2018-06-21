@@ -1,5 +1,7 @@
 package com.symb.foxpandasdk.data.models
 
+import com.symb.foxpandasdk.main.FoxPanda
+
 internal data class FirebaseInfo(
     var token: String = "",
     var deviceId: String = "",
@@ -13,8 +15,8 @@ internal data class BaseResult(
 )
 
 internal data class ErrorModel(
-    val errorCode: Int,
-    val errors: String,
-    val error: String,
-    val message: String
+    var errorCode: Int,
+    var errors: String,
+    var error: String,
+    var message: String
 )
