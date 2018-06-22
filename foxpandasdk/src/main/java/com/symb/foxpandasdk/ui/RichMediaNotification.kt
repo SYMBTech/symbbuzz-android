@@ -26,7 +26,6 @@ class RichMediaNotification: AppCompatActivity() {
         webview.settings.javaScriptEnabled = true
         webview.setWebViewClient(WebViewClient())
         webview.loadUrl(url)
-        webview.loadUrl(url)
         //webview.setOnTouchListener { v, event -> event.action == MotionEvent.ACTION_MOVE }
     }
 

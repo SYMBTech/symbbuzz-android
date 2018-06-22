@@ -18,6 +18,8 @@ class FoxPanda {
 
     companion object {
 
+        private const val TAG = "DBElements"
+
         fun register(serverKey: String, pandaId: String) {
 
         }
@@ -31,11 +33,47 @@ class FoxPanda {
             }
         }
 
-        fun getClassesName(context: Context) {
+        fun initialize(context: Context) {
             val db = DBHelper(context)
             val classes = CommonUtils.getClassesOfPackage(context)
+            val dbClasses = db.getAllInternalClasses()
+            if(dbClasses.size > 0) {
+                if(dbClasses.size != classes.size) {
+                    //update on server
+                    FPLogger(TAG, "sizes don't match")
+                    updateClassesToServer(context, classes)
+                } else {
+                    for (i in classes.indices) {
+                        if (!classes[i].equals(dbClasses[i])) {
+                            //update on server
+                            FPLogger(TAG, "classes don't match")
+                            updateClassesToServer(context, classes)
+                        }
+                    }
+                }
+            } else {
+                FPLogger(TAG, "first time insertion")
+                updateClassesToServer(context, classes)
+            }
+        }
+
+        //update classes to the server
+        private fun updateClassesToServer(context: Context, classes: Array<String>) {
+            val db = DBHelper(context)
+            db.deleteAllClass()
+            db.deleteAllInternalClass()
             classes.forEach {
-                db.saveClassNameIntoDB(it)
+                db.saveInternalClassNameIntoDB(it)
+                if (!it.contains("$") && !it.contains("foxpandasdk"))
+                    db.saveClassNameIntoDB(it)
+            }
+            val cls = db.getAllClasses()
+            cls.forEach {
+                FPLogger("clsName", it)
+            }
+            val icls = db.getAllInternalClasses()
+            icls.forEach {
+                FPLogger("iclsName", it)
             }
         }
 

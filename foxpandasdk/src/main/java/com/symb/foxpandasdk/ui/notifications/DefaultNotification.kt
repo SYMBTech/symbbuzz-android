@@ -18,13 +18,13 @@ import java.util.*
 
 internal open class DefaultNotification(var context: Context, var remoteMessage: RemoteMessage) {
 
-    var bitmap: Bitmap? = null
+    private var bitmap: Bitmap? = null
     var title: String? = remoteMessage.data.get(Constants.TITLE)
     var message: String? = remoteMessage.data.get(Constants.CONTENT)
-    var activity: String? = remoteMessage.data.get(Constants.CLICK_ACTION)
+    private var activity: String? = remoteMessage.data.get(Constants.CLICK_ACTION)
     var image: String? = remoteMessage.data.get(Constants.MEDIA_URL)
-    var url: String? = remoteMessage.data.get("url")
-    val db = DBHelper(context)
+    private var url: String? = remoteMessage.data.get("url")
+    private val db = DBHelper(context)
 
     open fun getInitView(context: Context, notificationId: Int, viewType: String): RemoteViews {
         val views: RemoteViews?
@@ -62,12 +62,14 @@ internal open class DefaultNotification(var context: Context, var remoteMessage:
     }
 
     fun initOpenIntent(context: Context, views: RemoteViews, notificationId: Int, activity: String) {
-        if(activity.equals("richMedia"))
+        if(activity.equals(Constants.RICH_MEDIA))
             setOpenPendingIntent(context, views, notificationId, activity)
         else {
             val classes = db.getAllClasses()
             classes.forEach {
-                if(it.contains(activity)) {
+                val className = it.split(".").reversed()
+                FoxPanda.FPLogger("actName", className[0])
+                if(className[0].equals(activity)) {
                     setOpenPendingIntent(context, views, notificationId, it)
                     return
                 }

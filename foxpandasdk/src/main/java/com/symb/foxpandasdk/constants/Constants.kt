@@ -7,6 +7,7 @@ internal object Constants {
     val TABLE_NAME = "foxpanda_notification_table"
     val TOKEN_TABLE = "foxpanda_token_table"
     val CLASS_TABLE = "class_table"
+    val ALL_CLASS_TABLE = "all_class_table"
     val FIREBASE_TOKEN = "firebase_token"
     val CLASS_NAME = "class_token"
     val DEVICE_ID = "device_id"
@@ -39,6 +40,8 @@ internal object Constants {
 
     val BIG_VIEW = "big_view"
     val SMALL_VIEW = "small_view"
+
+    val RICH_MEDIA = "richMedia"
 
     val NOTIFICATION_PATH = "com.symb.foxpandasdk.ui.notifications."
 

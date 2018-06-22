@@ -1,6 +1,5 @@
 package com.symb.foxpandasdk.services
 
-import android.util.Log
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.iid.FirebaseInstanceIdService
 import com.symb.foxpandasdk.constants.Constants
@@ -18,6 +17,6 @@ class FCMIdInstance: FirebaseInstanceIdService() {
         val refreshedToken = FirebaseInstanceId.getInstance().token
         dbHelper.registerToken(refreshedToken!!)
         CommonUtils.registerTokenToServer(refreshedToken, this)
-        Log.e("refreshtoken", refreshedToken)
+        FoxPanda.FPLogger("refreshtoken", refreshedToken)
     }
 }

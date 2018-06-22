@@ -18,12 +18,14 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
         db.execSQL(SQL_CREATE_TABLE)
         db.execSQL(SQL_CREATE_TOKEN_TABLE)
         db.execSQL(SQL_CREATE_CLASS_TABLE)
+        db.execSQL(SQL_CREATE_ALL_CLASS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
         db.execSQL(SQL_DELETE_TABLE)
         db.execSQL(SQL_DELETE_TOKEN_TABLE)
         db.execSQL(SQL_DELETE_CLASS_TABLE)
+        db.execSQL(SQL_DELETE_ALL_CLASS_TABLE)
         onCreate(db)
     }
 
@@ -128,7 +130,7 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
         val values = ContentValues()
         values.put(Constants.CLASS_NAME, className)
 
-        val newRowId = db.insertWithOnConflict(Constants.CLASS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        val newRowId = db.insert(Constants.CLASS_TABLE, null, values)
         db.close()
         return newRowId.toInt() != -1
     }
@@ -143,6 +145,14 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
         return result != -1
     }
 
+    @Throws(SQLiteConstraintException::class)
+    fun deleteAllClass(): Boolean {
+        val db = writableDatabase
+        val result = db.delete(Constants.CLASS_TABLE, null, null)
+        db.close()
+        return result != -1
+    }
+
     fun getAllClasses(): ArrayList<String> {
         val classes = ArrayList<String>()
         val db = writableDatabase
@@ -151,6 +161,47 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
             cursor = db.rawQuery("select * from " + Constants.CLASS_TABLE, null)
         } catch (e: SQLiteException) {
             db.execSQL(SQL_CREATE_CLASS_TABLE)
+            return ArrayList<String>()
+        }
+
+        if (cursor!!.moveToFirst()) {
+            while (cursor.isAfterLast == false) {
+                classes.add(cursor.getString(cursor.getColumnIndex(Constants.CLASS_NAME)))
+                cursor.moveToNext()
+            }
+        }
+        db.close()
+        return classes
+    }
+
+    @Throws(SQLiteConstraintException::class)
+    fun saveInternalClassNameIntoDB(className: String): Boolean {
+        val db = writableDatabase
+
+        val values = ContentValues()
+        values.put(Constants.CLASS_NAME, className)
+
+        val newRowId = db.insertWithOnConflict(Constants.ALL_CLASS_TABLE, null, values, SQLiteDatabase.CONFLICT_REPLACE)
+        db.close()
+        return newRowId.toInt() != -1
+    }
+
+    @Throws(SQLiteConstraintException::class)
+    fun deleteAllInternalClass(): Boolean {
+        val db = writableDatabase
+        val result = db.delete(Constants.ALL_CLASS_TABLE, null, null)
+        db.close()
+        return result != -1
+    }
+
+    fun getAllInternalClasses(): ArrayList<String> {
+        val classes = ArrayList<String>()
+        val db = writableDatabase
+        var cursor: Cursor? = null
+        try {
+            cursor = db.rawQuery("select * from " + Constants.ALL_CLASS_TABLE, null)
+        } catch (e: SQLiteException) {
+            db.execSQL(SQL_CREATE_ALL_CLASS_TABLE)
             return ArrayList<String>()
         }
 
@@ -183,11 +234,17 @@ internal class DBHelper(var context: Context): SQLiteOpenHelper(context, DATABAS
             "CREATE TABLE " + Constants.CLASS_TABLE + " (" +
                 Constants.CLASS_NAME + " TEXT)"
 
+        private val SQL_CREATE_ALL_CLASS_TABLE =
+            "CREATE TABLE " + Constants.ALL_CLASS_TABLE + " (" +
+                Constants.CLASS_NAME + " TEXT)"
+
         private val SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + Constants.TABLE_NAME
 
         private val SQL_DELETE_TOKEN_TABLE = "DROP TABLE IF EXISTS " + Constants.TOKEN_TABLE
 
         private val SQL_DELETE_CLASS_TABLE = "DROP TABLE IF EXISTS " + Constants.CLASS_TABLE
+
+        private val SQL_DELETE_ALL_CLASS_TABLE = "DROP TABLE IF EXISTS " + Constants.ALL_CLASS_TABLE
     }
 
 }
