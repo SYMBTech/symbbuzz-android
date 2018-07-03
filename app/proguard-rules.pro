@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#Keep all class names
+-keepnames class ** { *; }
+
+#Keep all class names within package
+-keepnames class com.symb.foxpanda.*
+-keepnames class com.symb.foxpandasdk.*

@@ -37,7 +37,6 @@ internal class FPNotificationManager(var context: Context, var remoteMessage: Re
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             setupChannels()
         }
-
         if(template != null) {
             val strings = template!!.split(".")
             val sortedStrings = strings.reversed()
@@ -91,7 +90,6 @@ internal class FPNotificationManager(var context: Context, var remoteMessage: Re
             FoxPanda.FPLogger(Constants.NOTIFICATION_DISPLAYED, "data successfully logged")
         else
             FoxPanda.FPLogger(Constants.NOTIFICATION_DISPLAYED, "data logging failed")
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
